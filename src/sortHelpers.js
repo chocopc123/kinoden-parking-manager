@@ -1,14 +1,13 @@
-
 function parkingNumberSort(parkingInfo) {
   const serverList = [];
   parkingInfo.forEach((rowData) => {
     serverList.push(rowData[1]);
-  })
+  });
   const uniqueServerList = [...new Set(serverList)];
   const length = uniqueServerList.length;
   // サーバーリスト内で自鯖を先頭にする
   uniqueServerList.forEach((rowData, index) => {
-    if(rowData === '自鯖') {
+    if (rowData === "自鯖") {
       const temp = uniqueServerList[0];
       uniqueServerList[0] = uniqueServerList[index];
       uniqueServerList[index] = temp;
@@ -19,15 +18,15 @@ function parkingNumberSort(parkingInfo) {
   let swapped;
   do {
     swapped = false;
-    for(i=1; i < length - 1; i++){
-      if (uniqueServerList[i] > uniqueServerList[i+1]) {
+    for (i = 1; i < length - 1; i++) {
+      if (uniqueServerList[i] > uniqueServerList[i + 1]) {
         const temp = uniqueServerList[i];
-        uniqueServerList[i] = uniqueServerList[i+1];
-        uniqueServerList[i+1] = temp;
-        swapped = true
+        uniqueServerList[i] = uniqueServerList[i + 1];
+        uniqueServerList[i + 1] = temp;
+        swapped = true;
       }
     }
-  } while(swapped);
+  } while (swapped);
 
   // サーバーリスト順にpush
   const sortedParkingInfo = [];
@@ -37,9 +36,9 @@ function parkingNumberSort(parkingInfo) {
       if (rowData[1] === serverName) {
         array.push(rowData);
       }
-    })
+    });
     sortedParkingInfo.push(array);
-  })
+  });
 
   return sortedParkingInfo;
 }
@@ -51,22 +50,30 @@ function sortByOpenTime(parkingInfos) {
   let swapped;
   do {
     swapped = false;
-    for(i=0; i < length - 1; i++) {
-      if (parkingInfos[i].openTime.getHours() > parkingInfos[i+1].openTime.getHours() ||
-      (parkingInfos[i].openTime.getHours() === parkingInfos[i+1].openTime.getHours() &&
-        parkingInfos[i].openTime.getMinutes() > parkingInfos[i+1].openTime.getMinutes())
+    for (i = 0; i < length - 1; i++) {
+      if (
+        parkingInfos[i].openTime.getHours() >
+          parkingInfos[i + 1].openTime.getHours() ||
+        (parkingInfos[i].openTime.getHours() ===
+          parkingInfos[i + 1].openTime.getHours() &&
+          parkingInfos[i].openTime.getMinutes() >
+            parkingInfos[i + 1].openTime.getMinutes())
       ) {
         const temp = parkingInfos[i];
-        parkingInfos[i] = parkingInfos[i+1];
-        parkingInfos[i+1] = temp;
-        swapped = true
+        parkingInfos[i] = parkingInfos[i + 1];
+        parkingInfos[i + 1] = temp;
+        swapped = true;
       }
-    };
-  } while(swapped);
+    }
+  } while (swapped);
 
   // 自鯖とそれ以外を分離する
-  const ownedParking = parkingInfos.filter(parkingInfo => parkingInfo.serverName === '自鯖');
-  const anotherParking = parkingInfos.filter(parkingInfo => parkingInfo.serverName !== '自鯖');
+  const ownedParking = parkingInfos.filter(
+    (parkingInfo) => parkingInfo.serverName === "自鯖"
+  );
+  const anotherParking = parkingInfos.filter(
+    (parkingInfo) => parkingInfo.serverName !== "自鯖"
+  );
 
-  return [...ownedParking, {isIndent: true}, ...anotherParking];
+  return [...ownedParking, { isIndent: true }, ...anotherParking];
 }
