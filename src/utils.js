@@ -16,9 +16,14 @@ function getWebhookUrl() {
 }
 
 // 数字をDate型に整形する処理
-function formatTime(number) {
+/**
+ *
+ * @param {number} timeNumber - 時間を表す1から6桁の数字
+ * @returns {Date}
+ */
+function formatTime(timeNumber) {
   // 数字を6桁の文字列にする 例: 000001
-  const timeString = number.toString().padStart(6, '0');
+  const timeString = timeNumber.toString().padStart(6, '0');
   // 6桁の文字列をhours, minutes, secondsに分割
   const hours = parseInt(timeString.slice(0, 2), 10);
   const minutes = parseInt(timeString.slice(2, 4), 10);
@@ -34,46 +39,45 @@ function formatTime(number) {
   return date;
 }
 
-// データを出力する形に整形する処理
-function formatFormAnswerData(rowData) {
+/**
+ * フォームの行データを整形する処理
+ * @param {RowData} rowData - 行データオブジェクト
+ * @returns {FormattedRowData}
+ */
+function formatFormRowData(rowData) {
   const result = {};
+
+  // タイムスタンプをセット
+  result.timestamp = rowData.timestamp;
+  // サーバー名をセット
+  result.serverName =
+    rowData.serverName === '自鯖(1487)' ? '自鯖' : rowData.serverName;
+  // 駐騎場名をセット
+  result.parkingName = rowData.parkingName;
+  // Discord通知フラグをセット
+  result.notifyDiscord = rowData.notifyDiscord;
 
   // 免戦終了時間をセット
   if (rowData.openTime || rowData.captureTime) {
-    let openTime;
+    let openTime = new Date();
     // 免戦時間がある場合はそれを設定、奪取時間の場合は4時間加算
     if (rowData.openTime) {
-      openTime = formatTime(Number(rowData.openTime));
+      openTime = formatTime(rowData.openTime);
     } else if (rowData.captureTime) {
-      const captureDateTime = formatTime(Number(rowData.captureTime));
+      const captureDateTime = formatTime(rowData.captureTime);
       captureDateTime.setHours(captureDateTime.getHours() + 4);
       openTime = captureDateTime;
     }
 
-    if (openTime) {
-      // 2時から8時までは休戦期間なので調整
-      const openTimeHours = openTime.getHours();
-      if (openTimeHours >= 2 && openTimeHours < 8) {
-        openTime.setHours(8);
-        openTime.setMinutes(0);
-        openTime.setSeconds(0);
-      }
-      result.openTime = openTime;
+    // 2時から8時までは休戦期間なので時間を調整
+    const openTimeHours = openTime.getHours();
+    if (openTimeHours >= 2 && openTimeHours < 8) {
+      openTime.setHours(8);
+      openTime.setMinutes(0);
+      openTime.setSeconds(0);
+      openTime.setMilliseconds(0);
     }
-  }
-  // サーバー名をセット
-  if (rowData.serverName) {
-    result.serverName =
-      rowData.serverName === '自鯖(1487)' ? '自鯖' : rowData.serverName;
-  }
-  // Discord通知フラグをセット
-  if (rowData.notifyDiscord) {
-    result.notifyDiscord =
-      rowData.notifyDiscord === '' ? false : rowData.notifyDiscord;
-  }
-  // 駐騎場名をセット
-  if (rowData.parkingName) {
-    result.parkingName = rowData.parkingName;
+    result.openTime = openTime;
   }
 
   return result;

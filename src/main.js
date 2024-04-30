@@ -19,7 +19,7 @@ function updateParkingInfoSheet() {
   // フォーム回答シートの最終行のデータを取得
   const lastRowNumber = formAnswerSheet.getLastRow();
   const lastRowData = getRowData(formAnswerSheet, lastRowNumber);
-  const formattedLastRowData = formatFormAnswerData(lastRowData);
+  const formattedLastRowData = formatFormRowData(lastRowData);
 
   // 通知のみするにチェックされた場合は通知して処理終了
   if (formattedLastRowData.notifyDiscord === '通知のみする') {
@@ -35,7 +35,7 @@ function updateParkingInfoSheet() {
   setRowData(parkingInfoSheet, targetParkingRowNumber, formattedLastRowData);
 
   // フォームでチェックを入れた場合のみ通知を送信する
-  if (formattedLastRowData.notifyDiscord) {
+  if (formattedLastRowData.notifyDiscord === '時間登録して通知する') {
     pushDiscordNotice();
   }
 }

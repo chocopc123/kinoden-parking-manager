@@ -1,11 +1,10 @@
 /**
  * シートから指定した行のデータを取得する処理
- * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - シート
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - 取得対象のシート
  * @param {number} rowNumber - 行番号
- * @return {RowData} - 行データ
+ * @returns {RowData} 行データオブジェクト
  */
 function getRowData(sheet, rowNumber) {
-  /** @type {RowData} */
   const result = {};
   Object.keys(PROPERTY_LIST).forEach((key) => {
     // propertyListのvalueに一致するセルを検索
@@ -13,7 +12,7 @@ function getRowData(sheet, rowNumber) {
     if (propertyCell) {
       const columnNumber = propertyCell.getColumn();
       const value = sheet.getRange(rowNumber, columnNumber).getValue();
-      result[key] = value;
+      result[key] = value === '' ? undefined : value;
     }
   });
 
@@ -31,7 +30,12 @@ function getMultipleRowData(sheet, start, end) {
   return result;
 }
 
-// 指定した行にデータを保存する処理
+/**
+ * 指定した行にデータを保存する処理
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - 保存対象のシート
+ * @param {number} rowNumber - 行番号
+ * @param {FormattedRowData} rowData - 行データオブジェクト
+ */
 function setRowData(sheet, rowNumber, rowData) {
   // FIXME: rowDataを基にforEach回したほうが良さそう
   Object.keys(PROPERTY_LIST).forEach((key) => {
