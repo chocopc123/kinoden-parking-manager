@@ -10,6 +10,7 @@ const PROPERTY_LIST = {
 };
 
 function updateParkingInfoSheet() {
+  if (!SHEET_ID) throw new Error('SHEET_ID does not exist.');
   const spreadSheet = SpreadsheetApp.openById(SHEET_ID);
   // フォーム回答のシート
   const formAnswerSheet = spreadSheet.getSheets()[0];
@@ -18,52 +19,54 @@ function updateParkingInfoSheet() {
 
   // フォーム回答シートの最終行のデータを取得
   const lastRowNumber = formAnswerSheet.getLastRow();
-  const lastRowData = getRowData(formAnswerSheet, lastRowNumber);
-  const formattedLastRowData = formatFormRowData(lastRowData);
-
+  const lastRowData = getFormRowData(formAnswerSheet, lastRowNumber);
   // 通知のみするにチェックされた場合は通知して処理終了
-  if (formattedLastRowData.notifyDiscord === '通知のみする') {
-    pushDiscordNotice();
+  if (lastRowData.notifyDiscord === '通知のみする') {
+    pushDiscordNotice(parkingInfoSheet);
     return;
   }
 
+  const formattedLastRowData = formatFormRowData(lastRowData);
   // 取得したデータを駐騎場状況シートに反映する
-  const targetParkingRowNumber = parkingInfoSheet
+  const targetParkingCell = parkingInfoSheet
     .createTextFinder(formattedLastRowData.parkingName)
-    .findNext()
-    .getRow();
+    .findNext();
+  if (targetParkingCell === null)
+    throw new Error('targetParkingCell does not exist.');
+  const targetParkingRowNumber = targetParkingCell.getRow();
+
   setRowData(parkingInfoSheet, targetParkingRowNumber, formattedLastRowData);
 
   // フォームでチェックを入れた場合のみ通知を送信する
   if (formattedLastRowData.notifyDiscord === '時間登録して通知する') {
-    pushDiscordNotice();
+    pushDiscordNotice(parkingInfoSheet);
   }
 }
 
-// Discordに通知を送信する
-function pushDiscordNotice() {
-  const spreadSheet = SpreadsheetApp.openById(SHEET_ID);
-  // 駐騎場状況のシート
-  const parkingInfoSheet = spreadSheet.getSheets()[1];
+/**
+ * Discordに通知を送信する
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - 取得対象のシート
+ */
+function pushDiscordNotice(sheet) {
   // 駐騎場状況シートの全行データを取得
-  const parkingInfoAllData = getMultipleRowData(parkingInfoSheet, 2, 13);
+  const parkingInfoAllData = getMultipleParkingRowData(sheet, 2, 13);
   // 停戦時間順に並び替える
   const sortedParkingInfoData = sortByOpenTime(parkingInfoAllData);
+  const postData = convertToPostData(sortedParkingInfoData);
 
   let postMessage = '';
-  sortedParkingInfoData.forEach((parkingInfo) => {
-    if (parkingInfo.isIndent) {
-      postMessage += '\n';
-      return;
-    }
-    const openTime = parkingInfo.openTime.toLocaleTimeString('en-US', {
+  postData.forEach((data) => {
+    const openTime = data.openTime.toLocaleTimeString('en-US', {
       hour12: false,
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
     });
-    const parkingNumber = parkingInfo.parkingName.split('越域駐騎場')[1];
-    postMessage += `${parkingInfo.serverName}-${parkingNumber}-${openTime}\n`;
+    const parkingNumber = data.parkingName.split('越域駐騎場')[1];
+    postMessage += `${data.serverName}-${parkingNumber}-${openTime}\n`;
+    if (data.isIndent) {
+      postMessage += '\n';
+    }
   });
   postMessage += '==============';
 
@@ -73,6 +76,7 @@ function pushDiscordNotice() {
   };
 
   const WEBHOOK_URL = getWebhookUrl();
+  if (!WEBHOOK_URL) throw new Error('Webhook URL does not exist.');
   UrlFetchApp.fetch(WEBHOOK_URL, {
     method: 'post',
     contentType: 'application/json',

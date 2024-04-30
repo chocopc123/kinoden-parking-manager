@@ -1,4 +1,8 @@
-// スクリプトプロパティから値を取得する処理
+/**
+ * スクリプトプロパティから値を取得する処理
+ * @param {string} propertyName - 取得したい環境変数の名称
+ * @returns {string | null}
+ */
 function env(propertyName) {
   return PropertiesService.getScriptProperties().getProperty(propertyName);
 }
@@ -46,13 +50,14 @@ function formatTime(timeNumber) {
  */
 function formatFormRowData(rowData) {
   const result = {};
-
   // タイムスタンプをセット
   result.timestamp = rowData.timestamp;
   // サーバー名をセット
+  if (!rowData.serverName) throw new Error('serverName does not exist');
   result.serverName =
     rowData.serverName === '自鯖(1487)' ? '自鯖' : rowData.serverName;
   // 駐騎場名をセット
+  if (!rowData.parkingName) throw new Error('serverName does not exist');
   result.parkingName = rowData.parkingName;
   // Discord通知フラグをセット
   result.notifyDiscord = rowData.notifyDiscord;
