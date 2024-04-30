@@ -1,10 +1,10 @@
 // 自鯖を先頭に移動して、他鯖との間に改行用データを仕込む処理
 function moveTopOwnServer(parkingInfos) {
   const ownedParking = parkingInfos.filter(
-    (parkingInfo) => parkingInfo.serverName === "自鯖"
+    (parkingInfo) => parkingInfo.serverName === '自鯖'
   );
   const anotherParking = parkingInfos.filter(
-    (parkingInfo) => parkingInfo.serverName !== "自鯖"
+    (parkingInfo) => parkingInfo.serverName !== '自鯖'
   );
 
   return [...ownedParking, { isIndent: true }, ...anotherParking];
@@ -47,8 +47,8 @@ function sortByServer(parkingInfos) {
     swapped = false;
     for (i = 0; i < length - 1; i++) {
       if (
-        (parkingInfos[i].serverName === "自鯖" &&
-          parkingInfos[i + 1] !== "自鯖") ||
+        (parkingInfos[i].serverName === '自鯖' &&
+          parkingInfos[i + 1] !== '自鯖') ||
         parkingInfos[i].serverName > parkingInfos[i + 1].serverName
       ) {
         const temp = parkingInfos[i];

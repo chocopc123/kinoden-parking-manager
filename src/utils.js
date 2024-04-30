@@ -6,19 +6,19 @@ function env(propertyName) {
 // 実行環境が開発環境か本番環境か判定する処理
 function isDevelopment() {
   const scriptUrl = ScriptApp.getService().getUrl();
-  return scriptUrl.endsWith("/dev");
+  return scriptUrl.endsWith('/dev');
 }
 
 // 実行環境によってWEBHOOK URLを取得する処理
 function getWebhookUrl() {
-  const propertyName = isDevelopment() ? "WEBHOOK_URL_DEV" : "WEBHOOK_URL_PRD";
+  const propertyName = isDevelopment() ? 'WEBHOOK_URL_DEV' : 'WEBHOOK_URL_PRD';
   return env(propertyName);
 }
 
 // 数字をDate型に整形する処理
 function formatTime(number) {
   // 数字を6桁の文字列にする 例: 000001
-  const timeString = number.toString().padStart(6, "0");
+  const timeString = number.toString().padStart(6, '0');
   // 6桁の文字列をhours, minutes, secondsに分割
   const hours = parseInt(timeString.slice(0, 2), 10);
   const minutes = parseInt(timeString.slice(2, 4), 10);
@@ -64,12 +64,12 @@ function formatFormAnswerData(rowData) {
   // サーバー名をセット
   if (rowData.serverName) {
     result.serverName =
-      rowData.serverName === "自鯖(1487)" ? "自鯖" : rowData.serverName;
+      rowData.serverName === '自鯖(1487)' ? '自鯖' : rowData.serverName;
   }
   // Discord通知フラグをセット
   if (rowData.notifyDiscord) {
     result.notifyDiscord =
-      rowData.notifyDiscord === "" ? false : rowData.notifyDiscord;
+      rowData.notifyDiscord === '' ? false : rowData.notifyDiscord;
   }
   // 駐騎場名をセット
   if (rowData.parkingName) {
