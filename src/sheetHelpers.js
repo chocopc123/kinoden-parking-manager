@@ -15,6 +15,7 @@ function getRowData(sheet, rowNumber) {
 }
 
 // シートから複数行のデータを取得する処理
+// FIXME: 処理時間が長い
 function getMultipleRowData(sheet, start, end) {
   const result = [];
   for (i = start; i <= end; i++) {
