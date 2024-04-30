@@ -1,5 +1,11 @@
-// シートから指定した行のデータを取得する処理
+/**
+ * シートから指定した行のデータを取得する処理
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - シート
+ * @param {number} rowNumber - 行番号
+ * @return {RowData} - 行データ
+ */
 function getRowData(sheet, rowNumber) {
+  /** @type {RowData} */
   const result = {};
   Object.keys(PROPERTY_LIST).forEach((key) => {
     // propertyListのvalueに一致するセルを検索
