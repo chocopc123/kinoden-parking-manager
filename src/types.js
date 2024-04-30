@@ -10,7 +10,7 @@
 
 /**
  * @typedef FormattedRowData
- * @property {timestamp} timestamp - フォーム回答時のタイムスタンプ
+ * @property {Date} timestamp - フォーム回答時のタイムスタンプ
  * @property {string | undefined} serverName - サーバー名
  * @property {string | undefined} parkingName - 駐騎場名
  * @property {Date} openTime - 免戦終了時間
