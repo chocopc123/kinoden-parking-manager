@@ -27,6 +27,7 @@ function getMultipleRowData(sheet, start, end) {
 
 // 指定した行にデータを保存する処理
 function setRowData(sheet, rowNumber, rowData) {
+  // FIXME: rowDataを基にforEach回したほうが良さそう
   Object.keys(PROPERTY_LIST).forEach((key) => {
     const propertyCell = sheet.createTextFinder(PROPERTY_LIST[key]).findNext();
     if (propertyCell) {
