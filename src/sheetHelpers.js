@@ -19,11 +19,17 @@ function getRowData(sheet, rowNumber) {
   return result;
 }
 
-// シートから複数行のデータを取得する処理
 // FIXME: 処理時間が長い
-function getMultipleRowData(sheet, start, end) {
+/**
+ * シートから複数行のデータを取得する処理
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - 取得対象のシート
+ * @param {number} startRow - どの行から取得するかを表す番号
+ * @param {number} endRow - どの行まで取得するかを表す番号
+ * @returns
+ */
+function getMultipleRowData(sheet, startRow, endRow) {
   const result = [];
-  for (i = start; i <= end; i++) {
+  for (i = startRow; i <= endRow; i++) {
     const rowData = getRowData(sheet, i);
     result.push(rowData);
   }
