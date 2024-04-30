@@ -60,6 +60,7 @@ function pushDiscordNotice() {
       hour12: false,
       hour: "2-digit",
       minute: "2-digit",
+      second: "2-digit",
     });
     const parkingNumber = parkingInfo.parkingName.split("越域駐騎場")[1];
     postMessage += `${parkingInfo.serverName}-${parkingNumber}-${openTime}\n`;

@@ -17,16 +17,19 @@ function getWebhookUrl() {
 
 // 数字をDate型に整形する処理
 function formatTime(number) {
-  // 数字を4桁の文字列にする 例: 0001
-  const timeString = number.toString().padStart(4, "0");
-  // 4桁の文字列をhoursとminutesに分割
+  // 数字を6桁の文字列にする 例: 000001
+  const timeString = number.toString().padStart(6, "0");
+  // 6桁の文字列をhours, minutes, secondsに分割
   const hours = parseInt(timeString.slice(0, 2), 10);
-  const minutes = parseInt(timeString.slice(2), 10);
+  const minutes = parseInt(timeString.slice(2, 4), 10);
+  const seconds = parseInt(timeString.slice(4, 6), 10);
 
   // Date型に設定
   const date = new Date();
   date.setHours(hours);
   date.setMinutes(minutes);
+  date.setSeconds(seconds);
+  date.setMilliseconds(0);
 
   return date;
 }
@@ -53,6 +56,7 @@ function formatFormAnswerData(rowData) {
       if (openTimeHours >= 2 && openTimeHours < 8) {
         openTime.setHours(8);
         openTime.setMinutes(0);
+        openTime.setSeconds(0);
       }
       result.openTime = openTime;
     }
